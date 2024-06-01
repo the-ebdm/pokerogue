@@ -28,8 +28,9 @@ import { Moves } from "../data/enums/moves";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
-import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
+import { NewBiomeEncounterPhase, OutdatedPhase, ReloadSessionPhase, SelectBiomePhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
+import { MapModifier } from "../modifier/modifier";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -128,7 +129,7 @@ interface VoucherUnlocks {
 }
 
 export interface VoucherCounts {
-	[type: string]: integer;
+  [type: string]: integer;
 }
 
 export interface DexData {
@@ -169,7 +170,7 @@ export const AbilityAttr = {
   ABILITY_HIDDEN: 4
 };
 
-export type StarterMoveset = [ Moves ] | [ Moves, Moves ] | [ Moves, Moves, Moves ] | [ Moves, Moves, Moves, Moves ];
+export type StarterMoveset = [Moves] | [Moves, Moves] | [Moves, Moves, Moves] | [Moves, Moves, Moves, Moves];
 
 export interface StarterFormMoveData {
   [key: integer]: StarterMoveset
@@ -202,7 +203,7 @@ const systemShortKeys = {
   seenAttr: "$sa",
   caughtAttr: "$ca",
   natureAttr: "$na",
-  seenCount: "$s" ,
+  seenCount: "$s",
   caughtCount: "$c",
   hatchedCount: "$hc",
   ivs: "$i",
@@ -405,7 +406,7 @@ export class GameData {
 
           this.migrateStarterAbilities(systemData, this.starterData);
         } else {
-          if ([ "1.0.0", "1.0.1" ].includes(systemData.gameVersion)) {
+          if (["1.0.0", "1.0.1"].includes(systemData.gameVersion)) {
             this.migrateStarterAbilities(systemData);
           }
           //this.fixVariantData(systemData);
@@ -499,7 +500,7 @@ export class GameData {
         return ret;
       }
 
-      return k.endsWith("Attr") && ![ "natureAttr", "abilityAttr", "passiveAttr" ].includes(k) ? BigInt(v) : v;
+      return k.endsWith("Attr") && !["natureAttr", "abilityAttr", "passiveAttr"].includes(k) ? BigInt(v) : v;
     }) as SystemSaveData;
   }
 
@@ -720,28 +721,7 @@ export class GameData {
           scene.score = sessionData.score;
           scene.updateScoreText();
 
-          scene.newArena(sessionData.arena.biome);
-
-          const battleType = sessionData.battleType || 0;
-          const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
-          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1);
-          battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
-
-          scene.arena.init();
-
-          sessionData.enemyParty.forEach((enemyData, e) => {
-            const enemyPokemon = enemyData.toPokemon(scene, battleType, e, sessionData.trainer?.variant === TrainerVariant.DOUBLE) as EnemyPokemon;
-            battle.enemyParty[e] = enemyPokemon;
-            if (battleType === BattleType.WILD) {
-              battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
-            }
-
-            loadPokemonAssets.push(enemyPokemon.loadAssets());
-          });
-
-          scene.arena.weather = sessionData.arena.weather;
-          // TODO
-          //scene.arena.tags = sessionData.arena.tags;
+          // Load modifiers first
 
           const modifiersModule = await import("../modifier/modifier");
 
@@ -752,18 +732,56 @@ export class GameData {
             }
           }
 
-          scene.updateModifiers(true);
+          scene.newArena(sessionData.arena.biome);
 
-          for (const enemyModifierData of sessionData.enemyModifiers) {
-            const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
-            if (modifier) {
-              scene.addEnemyModifier(modifier, true);
-            }
+          const battleType = sessionData.battleType || 0;
+          const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
+          const hasMap = scene.findModifier(m => m instanceof MapModifier);
+          scene.arena.init();
+
+          const gameLoadNavigation = false;
+
+          if (hasMap && gameLoadNavigation) {
+            this.scene.unshiftPhase(new SelectBiomePhase(scene));
+            const battleType = BattleType.WILD;
+            const battle = scene.newBattle(sessionData.waveIndex, battleType, null, false);
+
+            const partyAvgLevel = scene.getParty().reduce((acc, p) => acc + p.level, 0) / scene.getParty().length;
+            battle.enemyLevels = [Math.max(1, Math.floor(partyAvgLevel * Math.random() * 0.5 + partyAvgLevel * 0.75))];
+
+            this.scene.clearPhaseQueue();
+            this.scene.unshiftPhase(new NewBiomeEncounterPhase(this.scene));
+          } else {
+            const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1);
+            battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
+
+            sessionData.enemyParty.forEach((enemyData, e) => {
+              const enemyPokemon = enemyData.toPokemon(scene, battleType, e, sessionData.trainer?.variant === TrainerVariant.DOUBLE) as EnemyPokemon;
+              battle.enemyParty[e] = enemyPokemon;
+              if (battleType === BattleType.WILD) {
+                battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
+              }
+
+              loadPokemonAssets.push(enemyPokemon.loadAssets());
+              scene.arena.weather = sessionData.arena.weather;
+              // TODO
+              //scene.arena.tags = sessionData.arena.tags;
+
+              scene.updateModifiers(true);
+
+              for (const enemyModifierData of sessionData.enemyModifiers) {
+                const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
+                if (modifier) {
+                  scene.addEnemyModifier(modifier, true);
+                }
+              }
+            });
+            scene.updateModifiers(false);
+
+
+            Promise.all(loadPokemonAssets).then(() => resolve(true));
           }
 
-          scene.updateModifiers(false);
-
-          Promise.all(loadPokemonAssets).then(() => resolve(true));
         };
         if (sessionData) {
           initSessionFromData(sessionData);
@@ -992,7 +1010,7 @@ export class GameData {
           break;
         }
         const encryptedData = AES.encrypt(dataStr, saveKey);
-        const blob = new Blob([ encryptedData.toString() ], {type: "text/json"});
+        const blob = new Blob([encryptedData.toString()], { type: "text/json" });
         const link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
         link.download = `${dataKey}.prsv`;
@@ -1129,7 +1147,7 @@ export class GameData {
 
     for (const species of allSpecies) {
       data[species.speciesId] = {
-        seenAttr: 0n, caughtAttr: 0n, natureAttr: 0, seenCount: 0, caughtCount: 0, hatchedCount: 0, ivs: [ 0, 0, 0, 0, 0, 0 ]
+        seenAttr: 0n, caughtAttr: 0n, natureAttr: 0, seenCount: 0, caughtCount: 0, hatchedCount: 0, ivs: [0, 0, 0, 0, 0, 0]
       };
     }
 
@@ -1138,7 +1156,7 @@ export class GameData {
     const defaultStarterNatures: Nature[] = [];
 
     this.scene.executeWithSeedOffset(() => {
-      const neutralNatures = [ Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY ];
+      const neutralNatures = [Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY];
       for (let s = 0; s < defaultStarterSpecies.length; s++) {
         defaultStarterNatures.push(Utils.randSeedItem(neutralNatures));
       }
