@@ -9,14 +9,14 @@ import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
 import { initI18n } from "./plugins/i18n";
-import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
-import {initBiomes} from "#app/data/biomes";
-import {initEggMoves} from "#app/data/egg-moves";
-import {initPokemonForms} from "#app/data/pokemon-forms";
-import {initSpecies} from "#app/data/pokemon-species";
-import {initMoves} from "#app/data/move";
-import {initAbilities} from "#app/data/ability";
-import {initTrainerTypeDialogue} from "#app/data/dialogue";
+import { initPokemonPrevolutions } from "#app/data/pokemon-evolutions";
+import { initBiomes } from "#app/data/biomes";
+import { initEggMoves } from "#app/data/egg-moves";
+import { initPokemonForms } from "#app/data/pokemon-forms";
+import { initSpecies } from "#app/data/pokemon-species";
+import { initMoves } from "#app/data/move";
+import { initAbilities } from "#app/data/ability";
+import { initTrainerTypeDialogue } from "#app/data/dialogue";
 import i18next from "i18next";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
 
@@ -31,9 +31,9 @@ export class LoadingScene extends SceneBase {
   preload() {
     this.load["manifest"] = this.game["manifest"];
 
-    if (!isMobile()) {
-      this.load.video("intro_dark", "images/intro_dark.mp4", true);
-    }
+    // if (!isMobile()) {
+    //   this.load.video("intro_dark", "images/intro_dark.mp4", true);
+    // }
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
@@ -158,7 +158,7 @@ export class LoadingScene extends SceneBase {
       }
       if (getBiomeHasProps(bt)) {
         for (let p = 1; p <= 3; p++) {
-          const isPropAnimated = p === 3 && [ "power_plant", "end" ].find(b => b === btKey);
+          const isPropAnimated = p === 3 && ["power_plant", "end"].find(b => b === btKey);
           const propKey = `${btKey}_b_${p}`;
           if (!isPropAnimated) {
             this.loadImage(propKey, "arenas");

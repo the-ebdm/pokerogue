@@ -51,37 +51,37 @@ interface LanguageSetting {
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
-  "en":{
+  "en": {
     starterInfoTextSize: "56px",
     instructionTextSize: "42px",
   },
-  "de":{
+  "de": {
     starterInfoTextSize: "56px",
     instructionTextSize: "35px",
   },
-  "es":{
+  "es": {
     starterInfoTextSize: "56px",
     instructionTextSize: "35px",
   },
-  "it":{
+  "it": {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
-  "fr":{
+  "fr": {
     starterInfoTextSize: "54px",
     instructionTextSize: "42px",
   },
-  "zh":{
+  "zh": {
     starterInfoTextSize: "40px",
     instructionTextSize: "42px",
     starterInfoYOffset: 2
   },
-  "pt":{
+  "pt": {
     starterInfoTextSize: "48px",
     instructionTextSize: "42px",
     starterInfoXPos: 33,
   },
-  "ko":{
+  "ko": {
     starterInfoTextSize: "52px",
     instructionTextSize: "38px",
   }
@@ -113,11 +113,11 @@ function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
  * @param index UI index to calculate the icon position of
  * @returns An interface with an x and y property
  */
-function calcIconPosition(index: number): {x: number, y: number} {
+function calcIconPosition(index: number): { x: number, y: number } {
   const x = (index % 9) * 18;
   const y = Math.floor(index / 9) * 18;
 
-  return {x: x, y: y};
+  return { x: x, y: y };
 }
 
 /**
@@ -125,10 +125,10 @@ function calcIconPosition(index: number): {x: number, y: number} {
  * @param index UI index to calculate the icon position of
  * @returns An interface with an x and y property
  */
-function calcSpritePosition(index: number): {x: number, y: number} {
+function calcSpritePosition(index: number): { x: number, y: number } {
   const position = calcIconPosition(index);
 
-  return {x: position.x - 2, y: position.y + 2};
+  return { x: position.x - 2, y: position.y + 2 };
 }
 
 const gens = [
@@ -510,14 +510,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
 
     this.pokemonSprite = this.scene.add.sprite(53, 63, "pkmn__sub");
-    this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
+    this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`);    this.type1Icon.setScale(0.5);
+    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`); this.type1Icon.setScale(0.5);
     this.type1Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type1Icon);
 
-    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`);    this.type2Icon.setScale(0.5);
+    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`); this.type2Icon.setScale(0.5);
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
 
@@ -677,7 +677,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           generateSpecies();
 
           for (let pc = 0; pc < c; pc++) {
-            if (this.pokerusGens[pc] === species.generation -1 && this.pokerusCursors[pc] === pokerusCursor) {
+            if (this.pokerusGens[pc] === species.generation - 1 && this.pokerusCursors[pc] === pokerusCursor) {
               dupe = true;
               break;
             }
@@ -793,7 +793,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const starterData = this.scene.gameData.starterData[speciesId];
 
     return starterData.candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[starterData.valueReduction]
-        && starterData.valueReduction < 2;
+      && starterData.valueReduction < 2;
   }
 
   /**
@@ -833,7 +833,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           ease: "Cubic.easeOut",
           yoyo: true
         }
-      ],};
+      ],
+    };
 
     const passiveAvailable = this.isPassiveAvailable(species.speciesId);
     // 'Only Passives' mode
@@ -841,7 +842,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (passiveAvailable) {
         this.scene.tweens.chain(tweenChain).paused = startPaused;
       }
-    // 'On' mode
+      // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
       if (passiveAvailable || this.isValueReductionAvailable(species.speciesId)) {
         this.scene.tweens.chain(tweenChain).paused = startPaused;
@@ -876,7 +877,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
       this.candyUpgradeIcon[index].setVisible(
-        slotVisible && ( passiveAvailable || this.isValueReductionAvailable(species.speciesId)));
+        slotVisible && (passiveAvailable || this.isValueReductionAvailable(species.speciesId)));
       this.candyUpgradeOverlayIcon[index].setVisible(slotVisible && this.candyUpgradeIcon[index].visible);
     }
   }
@@ -1154,7 +1155,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
 
                     // Update the candy upgrade display
-                    if (this.isUpgradeIconEnabled() ) {
+                    if (this.isUpgradeIconEnabled()) {
                       this.setUpgradeIcon(this.cursor);
                     }
                     if (this.isUpgradeAnimationEnabled()) {
@@ -1176,7 +1177,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               options.push({
                 label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
                 handler: () => {
-                  if (candyCount >= reductionCost) {
+                  if (candyCount <= reductionCost) {
+                    starterData.candyCount += reductionCost * 3;
+                  }
+                  if (starterData.candyCount >= reductionCost) {
                     starterData.valueReduction++;
                     starterData.candyCount -= reductionCost;
                     this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
@@ -1192,7 +1196,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
                     // If the notification setting is set to 'On', update the candy upgrade display
                     if (this.scene.candyUpgradeNotification === 2) {
-                      if (this.isUpgradeIconEnabled() ) {
+                      if (this.isUpgradeIconEnabled()) {
                         this.setUpgradeIcon(this.cursor);
                       }
                       if (this.isUpgradeAnimationEnabled()) {
@@ -1430,7 +1434,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   updateInstructions(): void {
-    const instructionLines = [ ];
+    const instructionLines = [];
     const cycleInstructionLines = [];
     if (this.speciesStarterDexEntry?.caughtAttr) {
       if (this.canCycleShiny) {
@@ -1524,7 +1528,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
         this.starterValueLabels[s].setVisible(slotVisible);
         const speciesVariants = speciesId && this.scene.gameData.dexData[speciesId].caughtAttr & DexAttr.SHINY
-          ? [ DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3 ].filter(v => !!(this.scene.gameData.dexData[speciesId].caughtAttr & v))
+          ? [DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !!(this.scene.gameData.dexData[speciesId].caughtAttr & v))
           : [];
         for (let v = 0; v < 3; v++) {
           const hasVariant = speciesVariants.length > v;
@@ -1541,7 +1545,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
           if (!starterColors[speciesId]) {
             // Default to white if no colors are found
-            starterColors[speciesId] = [ "ffffff", "ffffff" ];
+            starterColors[speciesId] = ["ffffff", "ffffff"];
           }
 
           // Set the candy colors
@@ -1656,7 +1660,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         let growthReadable = Utils.toReadableString(GrowthRate[species.growthRate]);
         const growthAux = growthReadable.replace(" ", "_");
         if (i18next.exists("growth:" + growthAux)) {
-          growthReadable = i18next.t("growth:"+ growthAux as any);
+          growthReadable = i18next.t("growth:" + growthAux as any);
         }
         this.pokemonGrowthRateText.setText(growthReadable);
 
@@ -1672,7 +1676,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonCaughtHatchedContainer.setVisible(true);
         if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
           this.pokemonCaughtHatchedContainer.setY(16);
-          [ this.pokemonCandyIcon, this.pokemonCandyOverlayIcon, this.pokemonCandyDarknessOverlay, this.pokemonCandyCountText ].map(c => c.setVisible(false));
+          [this.pokemonCandyIcon, this.pokemonCandyOverlayIcon, this.pokemonCandyDarknessOverlay, this.pokemonCandyCountText].map(c => c.setVisible(false));
         } else {
           this.pokemonCaughtHatchedContainer.setY(25);
           this.pokemonCandyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
@@ -1697,7 +1701,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.pokemonCandyDarknessOverlay.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
           }
 
-          this.pokemonCandyDarknessOverlay.setCrop(0,0,16, candyCropY);
+          this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
         }
 
 
@@ -1904,11 +1908,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.checkIconId((this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite), species, female, formIndex, shiny, variant);
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
-        this.canCycleAbility = [ abilityAttr & AbilityAttr.ABILITY_1, (abilityAttr & AbilityAttr.ABILITY_2) && species.ability2, abilityAttr & AbilityAttr.ABILITY_HIDDEN ].filter(a => a).length > 1;
+        this.canCycleAbility = [abilityAttr & AbilityAttr.ABILITY_1, (abilityAttr & AbilityAttr.ABILITY_2) && species.ability2, abilityAttr & AbilityAttr.ABILITY_HIDDEN].filter(a => a).length > 1;
         this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
           .map((_, f) => dexEntry.caughtAttr & this.scene.gameData.getFormAttr(f)).filter(f => f).length > 1;
         this.canCycleNature = this.scene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
-        this.canCycleVariant = shiny && [ dexEntry.caughtAttr & DexAttr.DEFAULT_VARIANT, dexEntry.caughtAttr & DexAttr.VARIANT_2, dexEntry.caughtAttr & DexAttr.VARIANT_3].filter(v => v).length > 1;
+        this.canCycleVariant = shiny && [dexEntry.caughtAttr & DexAttr.DEFAULT_VARIANT, dexEntry.caughtAttr & DexAttr.VARIANT_2, dexEntry.caughtAttr & DexAttr.VARIANT_3].filter(v => v).length > 1;
       }
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
@@ -2136,7 +2140,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               passive: !(thisObj.scene.gameData.starterData[starterSpecies.speciesId].passiveAttr ^ (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)),
               nature: thisObj.starterNatures[i] as Nature,
               moveset: thisObj.starterMovesets[i],
-              pokerus: !![ 0, 1, 2 ].filter(n => thisObj.pokerusGens[n] === starterSpecies.generation - 1 && thisObj.pokerusCursors[n] === thisObj.genSpecies[starterSpecies.generation - 1].indexOf(starterSpecies)).length
+              pokerus: !![0, 1, 2].filter(n => thisObj.pokerusGens[n] === starterSpecies.generation - 1 && thisObj.pokerusCursors[n] === thisObj.genSpecies[starterSpecies.generation - 1].indexOf(starterSpecies)).length
             };
           }));
         };

@@ -1,26 +1,26 @@
 import Phaser from "phaser";
 import * as Utils from "./utils";
-import {ButtonKey, initTouchControls} from "./touch-controls";
+import { ButtonKey, initTouchControls } from "./touch-controls";
 import pad_generic from "./configs/pad_generic";
 import pad_unlicensedSNES from "./configs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/pad_xbox360";
 import pad_dualshock from "./configs/pad_dualshock";
 import pad_procon from "./configs/pad_procon";
-import {Button} from "./enums/buttons";
+import { Button } from "./enums/buttons";
 import BattleScene from "./battle-scene";
 
 export interface GamepadMapping {
-    [key: string]: number;
+  [key: string]: number;
 }
 
 export interface GamepadConfig {
-    padID: string;
-    padType: string;
-    gamepadMapping: GamepadMapping;
+  padID: string;
+  padType: string;
+  gamepadMapping: GamepadMapping;
 }
 
 export interface ActionGamepadMapping {
-    [key: string]: Button;
+  [key: string]: Button;
 }
 
 const repeatInputDelayMillis = 250;
@@ -171,8 +171,8 @@ export class InputsController {
     for (const b of Utils.getEnumValues(Button).reverse()) {
       if (
         this.interactions.hasOwnProperty(b) &&
-                this.repeatInputDurationJustPassed(b) &&
-                this.interactions[b].isPressed
+        this.repeatInputDurationJustPassed(b) &&
+        this.interactions[b].isPressed
       ) {
         // Prevents repeating button interactions when gamepad support is disabled.
         if (!this.gamepadSupport && this.interactions[b].source === "gamepad") {
@@ -354,7 +354,7 @@ export class InputsController {
       [Button.CYCLE_ABILITY]: [keyCodes.E],
       [Button.CYCLE_NATURE]: [keyCodes.N],
       [Button.V]: [keyCodes.V],
-      [Button.SPEED_UP]: [keyCodes.PLUS],
+      [Button.SPEED_UP]: [keyCodes.PERIOD],
       [Button.SLOW_DOWN]: [keyCodes.MINUS]
     };
     const mobileKeyConfig = new Map<string, ButtonKey>();

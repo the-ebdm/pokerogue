@@ -1,11 +1,11 @@
 import Phaser from "phaser";
-import {Mode} from "./ui/ui";
-import {InputsController} from "./inputs-controller";
+import { Mode } from "./ui/ui";
+import { InputsController } from "./inputs-controller";
 import MessageUiHandler from "./ui/message-ui-handler";
 import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
-import {Setting, settingOptions} from "./system/settings";
+import { Setting, settingOptions } from "./system/settings";
 import SettingsUiHandler from "./ui/settings-ui-handler";
-import {Button} from "./enums/buttons";
+import { Button } from "./enums/buttons";
 import BattleScene from "./battle-scene";
 
 type ActionKeys = Record<Button, () => void>;
@@ -52,46 +52,46 @@ export class UiInputs {
 
   getActionsKeyDown(): ActionKeys {
     const actions: ActionKeys = {
-      [Button.UP]:              () => this.buttonDirection(Button.UP),
-      [Button.DOWN]:            () => this.buttonDirection(Button.DOWN),
-      [Button.LEFT]:            () => this.buttonDirection(Button.LEFT),
-      [Button.RIGHT]:           () => this.buttonDirection(Button.RIGHT),
-      [Button.SUBMIT]:          () => this.buttonTouch(),
-      [Button.ACTION]:          () => this.buttonAb(Button.ACTION),
-      [Button.CANCEL]:          () => this.buttonAb(Button.CANCEL),
-      [Button.MENU]:            () => this.buttonMenu(),
-      [Button.STATS]:           () => this.buttonStats(true),
-      [Button.CYCLE_SHINY]:     () => this.buttonCycleOption(Button.CYCLE_SHINY),
-      [Button.CYCLE_FORM]:      () => this.buttonCycleOption(Button.CYCLE_FORM),
-      [Button.CYCLE_GENDER]:    () => this.buttonCycleOption(Button.CYCLE_GENDER),
-      [Button.CYCLE_ABILITY]:   () => this.buttonCycleOption(Button.CYCLE_ABILITY),
-      [Button.CYCLE_NATURE]:    () => this.buttonCycleOption(Button.CYCLE_NATURE),
-      [Button.V]:   () => this.buttonCycleOption(Button.V),
-      [Button.SPEED_UP]:        () => this.buttonSpeedChange(),
-      [Button.SLOW_DOWN]:       () => this.buttonSpeedChange(false),
+      [Button.UP]: () => this.buttonDirection(Button.UP),
+      [Button.DOWN]: () => this.buttonDirection(Button.DOWN),
+      [Button.LEFT]: () => this.buttonDirection(Button.LEFT),
+      [Button.RIGHT]: () => this.buttonDirection(Button.RIGHT),
+      [Button.SUBMIT]: () => this.buttonTouch(),
+      [Button.ACTION]: () => this.buttonAb(Button.ACTION),
+      [Button.CANCEL]: () => this.buttonAb(Button.CANCEL),
+      [Button.MENU]: () => this.buttonMenu(),
+      [Button.STATS]: () => this.buttonStats(true),
+      [Button.CYCLE_SHINY]: () => this.buttonCycleOption(Button.CYCLE_SHINY),
+      [Button.CYCLE_FORM]: () => this.buttonCycleOption(Button.CYCLE_FORM),
+      [Button.CYCLE_GENDER]: () => this.buttonCycleOption(Button.CYCLE_GENDER),
+      [Button.CYCLE_ABILITY]: () => this.buttonCycleOption(Button.CYCLE_ABILITY),
+      [Button.CYCLE_NATURE]: () => this.buttonCycleOption(Button.CYCLE_NATURE),
+      [Button.V]: () => this.buttonCycleOption(Button.V),
+      [Button.SPEED_UP]: () => this.buttonSpeedChange(),
+      [Button.SLOW_DOWN]: () => this.buttonSpeedChange(false),
     };
     return actions;
   }
 
   getActionsKeyUp(): ActionKeys {
     const actions: ActionKeys = {
-      [Button.UP]:              () => undefined,
-      [Button.DOWN]:            () => undefined,
-      [Button.LEFT]:            () => undefined,
-      [Button.RIGHT]:           () => undefined,
-      [Button.SUBMIT]:          () => undefined,
-      [Button.ACTION]:          () => undefined,
-      [Button.CANCEL]:          () => undefined,
-      [Button.MENU]:            () => undefined,
-      [Button.STATS]:           () => this.buttonStats(false),
-      [Button.CYCLE_SHINY]:     () => undefined,
-      [Button.CYCLE_FORM]:      () => undefined,
-      [Button.CYCLE_GENDER]:    () => undefined,
-      [Button.CYCLE_ABILITY]:   () => undefined,
-      [Button.CYCLE_NATURE]:    () => undefined,
-      [Button.V]:               () => this.buttonInfo(false),
-      [Button.SPEED_UP]:        () => undefined,
-      [Button.SLOW_DOWN]:       () => undefined,
+      [Button.UP]: () => undefined,
+      [Button.DOWN]: () => undefined,
+      [Button.LEFT]: () => undefined,
+      [Button.RIGHT]: () => undefined,
+      [Button.SUBMIT]: () => undefined,
+      [Button.ACTION]: () => undefined,
+      [Button.CANCEL]: () => undefined,
+      [Button.MENU]: () => undefined,
+      [Button.STATS]: () => this.buttonStats(false),
+      [Button.CYCLE_SHINY]: () => undefined,
+      [Button.CYCLE_FORM]: () => undefined,
+      [Button.CYCLE_GENDER]: () => undefined,
+      [Button.CYCLE_ABILITY]: () => undefined,
+      [Button.CYCLE_NATURE]: () => undefined,
+      [Button.V]: () => this.buttonInfo(false),
+      [Button.SPEED_UP]: () => undefined,
+      [Button.SLOW_DOWN]: () => undefined,
     };
     return actions;
   }
@@ -168,7 +168,7 @@ export class UiInputs {
 
   buttonSpeedChange(up = true): void {
     if (up) {
-      if (this.scene.gameSpeed < 5) {
+      if (this.scene.gameSpeed < 10) {
         this.scene.gameData.saveSetting(Setting.Game_Speed, settingOptions[Setting.Game_Speed].indexOf(`${this.scene.gameSpeed}x`) + 1);
         if (this.scene.ui?.getMode() === Mode.SETTINGS) {
           (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
